@@ -71,8 +71,10 @@ Requirements:
 Commands:
 
 ```bash
+make
+make help
+make check
 make lint
 make test
 make ci
 ```
-
