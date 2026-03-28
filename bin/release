@@ -4,4 +4,3 @@ cat <<'EOF'
 ---
 config_vars: {}
 EOF
-
