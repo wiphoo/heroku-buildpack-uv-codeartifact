@@ -17,8 +17,5 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y bats shellcheck shfmt
 
-      - name: Lint
-        run: make lint
-
-      - name: Test
-        run: make test
+      - name: Validate
+        run: make ci
