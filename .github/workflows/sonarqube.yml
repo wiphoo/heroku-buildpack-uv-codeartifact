@@ -15,13 +15,14 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Run tests
-        run: make check
-
-      - name: Install coverage tooling
+      - name: Install tooling
         run: |
           sudo apt-get update
-          sudo apt-get install -y kcov
+          sudo apt-get install -y bats shellcheck kcov
+          go install mvdan.cc/sh/v3/cmd/shfmt@latest
+
+      - name: Run tests
+        run: make check
 
       - name: Run coverage
         run: make coverage
