@@ -65,7 +65,7 @@ tools-coverage: ## Check coverage tooling
 		fi; \
 	done; \
 	if [ $$missing -ne 0 ]; then \
-		echo "Install coverage tooling with: sudo apt-get update && sudo apt-get install -y kcov python3"; \
+		echo "Install coverage tooling: python3 via apt; kcov must be built from source — see https://github.com/SimonKagstrom/kcov"; \
 		exit 1; \
 	fi; \
 	echo "Coverage tooling installed: kcov python3"
