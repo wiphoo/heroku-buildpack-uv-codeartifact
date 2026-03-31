@@ -4,7 +4,7 @@ api = "0.10"
 id = "com.wiphoo.aws-codeartifact-uv"
 name = "AWS CodeArtifact for uv"
 version = "0.1.0"
-homepage = "https://github.com/wiphoo/Heroku-Buildpack-AWS_CodeArtifact_UV"
+homepage = "https://github.com/wiphoo/heroku-buildpack-uv-codeartifact"
 clear-env = false
 
 [[targets]]

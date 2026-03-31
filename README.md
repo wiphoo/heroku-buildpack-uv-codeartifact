@@ -38,7 +38,7 @@ buildpack, not used as a replacement for it.
 
 1. `https://github.com/timanovsky/subdir-heroku-buildpack`
 2. `https://github.com/heroku/heroku-buildpack-awscli.git`
-3. `https://github.com/wiphoo/Heroku-Buildpack-AWS_CodeArtifact_UV.git`
+3. `https://github.com/wiphoo/heroku-buildpack-uv-codeartifact.git`
 4. `heroku/python`
 
 ## Required config vars
@@ -107,7 +107,7 @@ Example:
 pack build example-app \
   --path /path/to/app \
   --builder heroku/builder:24 \
-  --buildpack /path/to/Heroku-Buildpack-AWS_CodeArtifact_UV \
+  --buildpack /path/to/heroku-buildpack-uv-codeartifact \
   --env AWS_CODEARTIFACT_DOMAIN=example \
   --env AWS_CODEARTIFACT_DOMAIN_OWNER=123456789012 \
   --env AWS_CODEARTIFACT_REGION=us-east-1
