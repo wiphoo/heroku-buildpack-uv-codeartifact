@@ -197,6 +197,71 @@ EOF
 	[ "${status}" -eq 0 ]
 }
 
+@test "compile logs AWS config context before fetching token" {
+	write_pyproject_with_uv_index
+	write_aws_stub
+	write_env_file "AWS_CODEARTIFACT_DOMAIN" "my-domain"
+	write_env_file "AWS_CODEARTIFACT_DOMAIN_OWNER" "123456789012"
+	write_env_file "AWS_CODEARTIFACT_REGION" "ap-southeast-1"
+
+	run_compile
+
+	[ "${status}" -eq 0 ]
+	[[ "${output}" == *"domain:       my-domain"* ]]
+	[[ "${output}" == *"domain-owner: 123456789012"* ]]
+	[[ "${output}" == *"region:       ap-southeast-1"* ]]
+}
+
+@test "compile logs masked AWS_ACCESS_KEY_ID when set" {
+	write_pyproject_with_uv_index
+	write_aws_stub
+	write_env_file "AWS_CODEARTIFACT_DOMAIN" "example"
+	write_env_file "AWS_CODEARTIFACT_DOMAIN_OWNER" "123456789012"
+	write_env_file "AWS_CODEARTIFACT_REGION" "us-east-1"
+	write_env_file "AWS_ACCESS_KEY_ID" "AKIAIOSFODNN7EXAMPLE"
+
+	run_compile
+
+	[ "${status}" -eq 0 ]
+	[[ "${output}" == *"AWS_ACCESS_KEY_ID is set (key ID: AKIAIOSF...)"* ]]
+}
+
+@test "compile logs session token presence when AWS_SESSION_TOKEN is set" {
+	write_pyproject_with_uv_index
+	write_aws_stub
+	write_env_file "AWS_CODEARTIFACT_DOMAIN" "example"
+	write_env_file "AWS_CODEARTIFACT_DOMAIN_OWNER" "123456789012"
+	write_env_file "AWS_CODEARTIFACT_REGION" "us-east-1"
+	write_env_file "AWS_ACCESS_KEY_ID" "ASIAIOSFODNN7EXAMPLE"
+	write_env_file "AWS_SESSION_TOKEN" "FakeSessionToken"
+
+	run_compile
+
+	[ "${status}" -eq 0 ]
+	[[ "${output}" == *"AWS_SESSION_TOKEN is set (temporary credentials)"* ]]
+}
+
+@test "compile surfaces AWS CLI error message when token fetch fails" {
+	write_pyproject_with_uv_index
+	cat >"${stub_bin_dir}/aws" <<'EOF'
+#!/usr/bin/env bash
+case "${1:-}" in
+  --version) echo "aws-cli/2.0.0 stub" ;;
+  *) echo "An error occurred (UnrecognizedClientException) when calling the GetAuthorizationToken operation: The security token included in the request is invalid." >&2; exit 1 ;;
+esac
+EOF
+	chmod +x "${stub_bin_dir}/aws"
+	write_env_file "AWS_CODEARTIFACT_DOMAIN" "example"
+	write_env_file "AWS_CODEARTIFACT_DOMAIN_OWNER" "123456789012"
+	write_env_file "AWS_CODEARTIFACT_REGION" "us-east-1"
+
+	run_compile
+
+	[ "${status}" -eq 1 ]
+	[[ "${output}" == *"AWS CLI call failed"* ]]
+	[[ "${output}" == *"UnrecognizedClientException"* ]]
+}
+
 @test "cnb detect succeeds when run from an app directory" {
 	write_pyproject_with_uv_index
 

@@ -65,12 +65,40 @@ fetch_codeartifact_token() {
 	require_env "AWS_CODEARTIFACT_DOMAIN_OWNER" || return 1
 	require_env "AWS_CODEARTIFACT_REGION" || return 1
 
-	aws codeartifact get-authorization-token \
+	local aws_error token_output
+	if ! token_output="$(aws codeartifact get-authorization-token \
 		--domain "${AWS_CODEARTIFACT_DOMAIN}" \
 		--domain-owner "${AWS_CODEARTIFACT_DOMAIN_OWNER}" \
 		--region "${AWS_CODEARTIFACT_REGION}" \
 		--query authorizationToken \
-		--output text
+		--output text 2>/tmp/aws_codeartifact_error.txt)"; then
+		aws_error="$(<"/tmp/aws_codeartifact_error.txt")"
+		log_error "AWS CLI call failed"
+		if [[ -n "${aws_error}" ]]; then
+			log_error "${aws_error}"
+		fi
+		return 1
+	fi
+	printf '%s' "${token_output}"
+}
+
+log_aws_context() {
+	if command -v aws >/dev/null 2>&1; then
+		log "Using $(aws --version 2>&1)"
+	fi
+
+	log "  domain:       ${AWS_CODEARTIFACT_DOMAIN:-<not set>}"
+	log "  domain-owner: ${AWS_CODEARTIFACT_DOMAIN_OWNER:-<not set>}"
+	log "  region:       ${AWS_CODEARTIFACT_REGION:-<not set>}"
+
+	if [[ -n "${AWS_ACCESS_KEY_ID:-}" ]]; then
+		log "  credentials:  AWS_ACCESS_KEY_ID is set (key ID: ${AWS_ACCESS_KEY_ID:0:8}...)"
+		if [[ -n "${AWS_SESSION_TOKEN:-}" ]]; then
+			log "  credentials:  AWS_SESSION_TOKEN is set (temporary credentials)"
+		fi
+	else
+		log "  credentials:  AWS_ACCESS_KEY_ID not set — relying on instance profile or ~/.aws"
+	fi
 }
 
 write_export_script() {

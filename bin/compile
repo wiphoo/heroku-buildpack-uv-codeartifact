@@ -27,6 +27,7 @@ index_name="${UV_CODEARTIFACT_INDEX_NAME:-codeartifact}"
 normalized_index_name="$(normalize_index_name "${index_name}")"
 
 log "Fetching AWS CodeArtifact token for uv index ${index_name}"
+log_aws_context
 if ! token="$(fetch_codeartifact_token)"; then
 	exit 1
 fi
