@@ -143,3 +143,8 @@ make test-integration-generic
 make test-integration-heroku
 make ci
 ```
+
+## SonarCloud
+
+Pushes and pull requests trigger `.github/workflows/sonarqube.yml`. Create a `SONAR_TOKEN`
+secret in the repository and point it at your SonarCloud token so the workflow can authenticate.
