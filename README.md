@@ -19,8 +19,6 @@ Example normalization:
 - `codeartifact` -> `UV_INDEX_CODEARTIFACT_USERNAME`
 - `private-prod` -> `UV_INDEX_PRIVATE_PROD_USERNAME`
 
-AWS credentials must already be available to the AWS CLI during build.
-
 ## Compatibility
 
 This repository is primarily intended for classic Heroku buildpack usage on
