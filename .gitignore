@@ -1,3 +1,5 @@
 export
 .tmp/
-
+.claude/
+.claude-flow/
+.mcp.json

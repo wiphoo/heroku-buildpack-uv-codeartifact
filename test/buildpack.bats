@@ -4,6 +4,7 @@ setup() {
 	repo_root="${BATS_TEST_DIRNAME}/.."
 	test_tmp="$(mktemp -d "${BATS_TEST_DIRNAME}/tmp.XXXXXX")"
 	build_dir="${test_tmp}/build"
+	other_build_dir="${test_tmp}/other-build"
 	cache_dir="${test_tmp}/cache"
 	env_dir="${test_tmp}/env"
 	layers_dir="${test_tmp}/layers"
@@ -12,7 +13,7 @@ setup() {
 	stub_bin_dir="${test_tmp}/bin"
 	test_token_env_var="BUILDPACK_TEST_AWS_CODEARTIFACT_TOKEN"
 
-	mkdir -p "${build_dir}" "${cache_dir}" "${env_dir}" "${layers_dir}" "${platform_dir}" "${stub_bin_dir}"
+	mkdir -p "${build_dir}" "${other_build_dir}" "${cache_dir}" "${env_dir}" "${layers_dir}" "${platform_dir}" "${stub_bin_dir}"
 	rm -f "${repo_root}/export"
 }
 
@@ -104,6 +105,22 @@ run_build() {
 	write_pyproject_without_uv_index
 
 	run "${repo_root}/bin/detect" "${build_dir}"
+
+	[ "${status}" -eq 1 ]
+}
+
+@test "detect uses the explicit build dir even when the caller cwd has a uv index" {
+	write_pyproject_without_uv_index
+
+	cat >"${other_build_dir}/pyproject.toml" <<'EOF'
+[[tool.uv.index]]
+name = "codeartifact"
+url = "https://example.invalid/simple/"
+EOF
+
+	pushd "${other_build_dir}" >/dev/null
+	run "${repo_root}/bin/detect" "${build_dir}"
+	popd >/dev/null
 
 	[ "${status}" -eq 1 ]
 }

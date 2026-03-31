@@ -5,10 +5,13 @@ set -euo pipefail
 buildpack_dir="$(cd "$(dirname "$0")/.." && pwd)"
 source "${buildpack_dir}/lib/common.sh"
 
-build_dir="${1:-${PWD}}"
+build_dir="${1:-}"
 cnb_mode=false
 
-if [[ -f "${PWD}/pyproject.toml" ]]; then
+if [[ -z "${build_dir}" ]]; then
+	build_dir="${PWD}"
+	cnb_mode=true
+elif [[ ! -f "${build_dir}/pyproject.toml" ]] && [[ -f "${PWD}/pyproject.toml" ]]; then
 	build_dir="${PWD}"
 	cnb_mode=true
 fi

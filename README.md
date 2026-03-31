@@ -1,8 +1,8 @@
 # AWS CodeArtifact for `uv`
 
-Cloud Native Buildpack that fetches an AWS CodeArtifact token during build and
-exposes it to downstream build steps using `uv` named-index environment
-variables.
+Classic Heroku buildpack for Cedar-generation apps that fetches an AWS
+CodeArtifact token during build and exposes it to downstream build steps using
+`uv` named-index environment variables.
 
 This buildpack is intended for Python apps that install private packages from
 AWS CodeArtifact with `uv`.
@@ -20,6 +20,28 @@ Example normalization:
 - `private-prod` -> `UV_INDEX_PRIVATE_PROD_USERNAME`
 
 AWS credentials must already be available to the AWS CLI during build.
+
+## Compatibility
+
+This repository is primarily intended for classic Heroku buildpack usage on
+Cedar-generation apps.
+
+Detection is strict. The app must contain a `pyproject.toml` file with a
+`[[tool.uv.index]]` block or Heroku will report:
+
+```text
+App not compatible with buildpack
+```
+
+This buildpack is intended to be added alongside your primary language
+buildpack, not used as a replacement for it.
+
+## Intended classic buildpack order
+
+1. `https://github.com/timanovsky/subdir-heroku-buildpack`
+2. `https://github.com/heroku/heroku-buildpack-awscli.git`
+3. `https://github.com/wiphoo/Heroku-Buildpack-AWS_CodeArtifact_UV.git`
+4. `heroku/python`
 
 ## Required config vars
 
@@ -53,6 +75,10 @@ still belongs in `pyproject.toml`.
 
 ## Local `pack build` usage
 
+`pack build` support in this repository is a local verification harness for the
+buildpack logic. It is not the supported way to consume this repository on
+Heroku Cedar apps.
+
 Example:
 
 ```bash
@@ -68,6 +94,10 @@ pack build example-app \
 For deterministic local testing without real AWS access, the integration
 harness uses the test-only environment override
 `BUILDPACK_TEST_AWS_CODEARTIFACT_TOKEN`.
+
+For Heroku Fir/CNB apps, do not configure this repository as a classic
+Git-URL buildpack. Use Heroku CNB configuration through `project.toml`
+instead.
 
 ## Local development
 
