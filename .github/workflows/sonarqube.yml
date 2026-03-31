@@ -1,4 +1,4 @@
-name: Build SonarQube Scan
+name: SonarCloud Scan
 
 on:
   push:
@@ -31,7 +31,7 @@ jobs:
         run: test -f coverage/coverage.xml
 
       - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v5.2.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io

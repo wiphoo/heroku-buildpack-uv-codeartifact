@@ -21,7 +21,7 @@ tools-lint: ## Check lint tools
 		fi; \
 	done; \
 	if [ $$missing -ne 0 ]; then \
-		echo "Install on Ubuntu/Debian: sudo apt-get update && sudo apt-get install -y shellcheck shfmt"; \
+		echo "Install on Ubuntu/Debian: sudo apt-get install -y shellcheck && go install mvdan.cc/sh/v3/cmd/shfmt@latest"; \
 		exit 1; \
 	fi; \
 	echo "All lint tools are installed: shellcheck shfmt"
@@ -75,6 +75,7 @@ coverage: tools-test tools-coverage ## Generate a Sonar generic coverage report 
 	@rm -rf coverage
 	@mkdir -p coverage/kcov
 	@kcov --clean --cobertura-only --include-path="$(CURDIR)/bin,$(CURDIR)/lib" coverage/kcov bats test/buildpack.bats
+	@test -f coverage/kcov/cov.xml || { echo "kcov cobertura output not found at coverage/kcov/cov.xml; got:"; ls coverage/kcov/; exit 1; }
 	@python3 test/support/kcov_to_sonar_generic.py coverage/kcov/cov.xml coverage/coverage.xml
 	@test -f coverage/coverage.xml
 
