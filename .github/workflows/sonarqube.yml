@@ -27,7 +27,7 @@ jobs:
 
       - name: Run coverage
         run: |
-          coverage run -m pytest
+          coverage run -m pytest PSE
           coverage xml
 
       - name: SonarQube Scan
