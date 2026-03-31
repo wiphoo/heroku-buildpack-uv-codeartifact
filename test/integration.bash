@@ -14,6 +14,7 @@ require_tool() {
 		echo "Required tool not found: ${tool}" >&2
 		exit 1
 	fi
+	return 0
 }
 
 case "${scenario}" in
@@ -38,6 +39,7 @@ esac
 
 cleanup() {
 	docker image rm -f "${image_name}" >/dev/null 2>&1 || true
+	return 0
 }
 
 trap cleanup EXIT

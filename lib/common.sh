@@ -12,6 +12,7 @@ log() {
 
 log_error() {
 	echo "-----> $*" >&2
+	return 0
 }
 
 app_has_uv_index() {
@@ -27,6 +28,7 @@ normalize_index_name() {
 	printf '%s' "${raw_name}" |
 		tr '[:lower:]' '[:upper:]' |
 		sed -E 's/[^A-Z0-9]+/_/g; s/^_+//; s/_+$//'
+	return 0
 }
 
 require_env() {
@@ -120,6 +122,7 @@ log_aws_context() {
 	else
 		log "  credentials:  no access key set — relying on instance profile or ~/.aws"
 	fi
+	return 0
 }
 
 write_export_script() {
@@ -134,6 +137,7 @@ write_export_script() {
 	} >"${destination}"
 
 	chmod +x "${destination}"
+	return 0
 }
 
 validate_token() {
