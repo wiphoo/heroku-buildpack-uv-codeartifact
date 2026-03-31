@@ -7,6 +7,7 @@ readonly TEST_TOKEN_ENV_VAR="BUILDPACK_TEST_AWS_CODEARTIFACT_TOKEN"
 
 log() {
 	echo "-----> $*"
+	return 0
 }
 
 log_error() {
